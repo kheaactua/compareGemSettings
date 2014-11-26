@@ -26,6 +26,15 @@ Limitations
 
 This app is only written for GEM/3.3.8, and does not compare chemistry configuration keys.
 
+Building
+========
+
+The ``Makefile`` is designed to work in the Environment Canada environment using s.f90, or elsewise to use
+PGI compilers.  This is detected by looking for the ``EC_ARCH`` environment variable.
+
+To build, simple type
+    make
+
 Usage
 =====
 
