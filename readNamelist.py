@@ -16,6 +16,10 @@ if len(sys.argv) >= 1:
 	nlfile=sys.argv[1]
 
 # First, remove some of the known replacement strings
+# Often the 'aftermod' file should be used (which doesn't include these)
+# rather than the 'beforemod' fileo
+#
+# In any case, skip this for now.
 if (False):
 	f=open(nlfile,'r')
 	output='';
@@ -36,13 +40,6 @@ if (False):
 proc = Popen("%s/_readNamelist %s"%(SCRIPT_PATH, nlfile), stdout=PIPE, stderr=None, shell=True)
 (namelistContent, err) = proc.communicate()
 
-#namelistContent = """
-#Test
-#multiline content
-#here
-#"""
-#print namelistContent.splitlines()
-
 it = iter(namelistContent.splitlines())
 #print it.next()
 
@@ -50,16 +47,12 @@ repeat = 0;
 lastline = "";
 namelist=''
 output=''
-skip = False;
 reKey = re.compile(r'[a-zA-Z].*=')
 for i,line in enumerate(it):
 	# Figure out what namelist we're in
 	match = re.search(r'\&(\w+)', line)
 	if match:
 		namelist=match.group(1)
-
-	if skip and i < 7695:
-		continue
 
 	# Ignore lines outside a namelist
 	#if namelist == '':
@@ -77,7 +70,6 @@ for i,line in enumerate(it):
 	# Get rid of messed up characters
 	line = filter(lambda x: x in string.printable, line)
 
-
 	# Get rid of blank/useless lines
 	if line == ",":
 		continue;
@@ -88,8 +80,6 @@ for i,line in enumerate(it):
 		if repeat>repeatThreashold:
 			continue;
 	else:
-		#print "%d: \"%s\""%(i-1,lastline)
-		#print "%d: \"%s\"\n"%(i,line)
 		if repeat>repeatThreashold:
 			# This adds an annoying coupling to the contactenation section below,
 			# only real clean way to avoid this would be to add another loup
@@ -99,8 +89,6 @@ for i,line in enumerate(it):
 		repeat = 0;
 
 	# Now, concatenate arrays into the same line.  Hopefully this'll still work with gfortran
-	#match = re.search(r'^[a-zA-Z].*=', line, re.IGNORECASE)
-	#match = re.match(r'[a-zA-Z].*=', line, re.IGNORECASE)
 	matchNN = re.search(r'^\s*&', line, re.IGNORECASE)
 	if reKey.match(line, re.IGNORECASE) or matchNN or line==' /':
 	#if match or matchNN or line==' /':
@@ -110,14 +98,7 @@ for i,line in enumerate(it):
 			output += '\n'
 		#output += "%3d: "%(i)
 	output += line;
-
-	#print "%3d: (%s) '%s'"%(i,namelist,line)
-	#print "%3d: %s\n"%(i,lastline) 
-
 	lastline=line
-
-	if skip and i > 7704:
-		break
 
 # Now, comform this to CSV, keeping the values in a second column
 # (even if they're arrays)
@@ -138,3 +119,6 @@ for i,line in enumerate(it):
 	#output += line + '\n'
 
 print output
+
+if os.path.isfile(tmp_settings_file):
+	os.unlink(tmp_settings_file)
