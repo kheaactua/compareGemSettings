@@ -33,6 +33,7 @@ The ``Makefile`` is designed to work in the Environment Canada environment using
 PGI compilers.  This is detected by looking for the ``EC_ARCH`` environment variable.
 
 To build, simple type
+
     make
 
 Usage
