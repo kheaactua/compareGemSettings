@@ -26,6 +26,17 @@ Limitations
 
 This app is only written for GEM/3.3.8, and does not compare chemistry configuration keys.
 
+Usage
+=====
+
+Once the app is loaded into your path, use it with your gem_settings file as the first argument:
+
+    readNamelist.py gem_settings.nml
+
+Or, to output all the default values, do not specify any file
+
+    readNamelist.py
+
 Expansion
 =========
 
