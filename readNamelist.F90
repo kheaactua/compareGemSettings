@@ -7,6 +7,14 @@ module CompareNameLists
 
 		integer :: i, k
 		integer, parameter :: iun=8
+
+#if __GFORTRAN__==1
+#else
+		! PGI needs these symbols defined
+		integer :: iargc
+		external :: iargc
+#endif
+
 		character (len=200) :: BUFFER, INFILE
 
 		! Source /home/dormrb02/modeles/GEMDM_shared+/v_3.3.8.2/src/pilot.cdk
