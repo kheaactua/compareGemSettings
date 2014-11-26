@@ -4,16 +4,16 @@ compareGemSettings
 This application is used to compare gem_settings files for GEM/3.3.8.  In order to do this,
 all the namelists and their respective variable declarations were copied into the source
 of this file.  Every variable is referenced back to its original source, but this will be
-discussed later in the expansion center.
+discussed later in the expansion section.
 
 The Fortran component of this app declares all the variables and sets their default values
-as the GEM model would set them.  It then reads in the specified namelist file to set these
+as the GEM model would.  It then reads in the specified namelist file to set these
 variables.  Once set, it prints out all the variables.
 
-This output it captured by the python component of this app which formats the variables into a
+This output is captured by the python component of this app which formats the variables into a
 CSV file and carries out some other cleaning tasks (e.g. removing repeated lines.)
 
-The motivation of this is that many settings files for GEM rely on default values, define values
+The motivation of this app is that many settings files for GEM rely on default values, define values
 in different orders, have varying custom whitespace, and can be subtlety different making it
 difficult to spot differences.  This app organizes all the key/value pairs into a consistent,
 ordered, and exportable format that allows for easy comparison.
