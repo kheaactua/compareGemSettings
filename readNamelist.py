@@ -1,127 +1,139 @@
 #!/usr/bin/env python
-
 import sys
 import re
 import os
 from subprocess import Popen, PIPE
 import string
 
-SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
-repeatThreashold = 4
-tmp_settings_file = '/tmp/TMP.gem_settings.nml'
+class NSParser(object): 
+    """ class to make dealing with parsing easier """
+    repeat_threshold = 4
+    re_key = re.compile(r'[a-zA-Z].*=')
 
-# Get namelist
-nlfile=''
-if len(sys.argv) >= 2:
-    nlfile=sys.argv[1]
+    def __init__(self, proc):
+        (namelist_content, err) = proc.communicate()
+        self.it = iter(namelist_content.splitlines())
 
-# First, remove some of the known replacement strings
-# Often the 'aftermod' file should be used (which doesn't include these)
-# rather than the 'beforemod' fileo
-#
-# In any case, skip this for now.
-if (False):
-    f=open(nlfile,'r')
-    output='';
-    for line in f.readlines():
-        # Start and end dates
-        line = re.sub(r"((strt_|end_).*)\s*=\s*('|\")[a-zA-Z].*('|\")\s*,", r"\1 = '0',", line)
+        self.repeat = 0
+        self.output = ''
 
-        # Other known constants
-        line = re.sub(r"=(\s*)PTOPO_NPE.", r"=\1 0        ", line)
+    @staticmethod
+    def strip_whitespace(line):
+        """ strips unecessary whitespace *including trailing newlines* from a single line """
+        line = re.sub(r'^\s([a-zA-Z])', r'\1', line, re.IGNORECASE)
+        line = re.sub(r'\s+,', r',', line)
+        line = re.sub(r'\s*=\s+', r' = ', line)
+        line = re.sub(r"^\s*([\d'-])", r' \1', line, re.IGNORECASE)
+        line = re.sub(r"\s*$", r'', line, re.IGNORECASE)
+        line = re.sub(r"\s*&", r'&', line, re.IGNORECASE)
+        return line
 
-        output = output + line;
-    f = open(tmp_settings_file,'w')
-    f.write(output)
-    f.close() 
+    @staticmethod
+    def filter_line(line):
+        """ filters a single line """
+        line = filter(lambda x: x in string.printable, line)
+        return line
 
-    nlfile=tmp_settings_file
+    def parse_line(self, line, lastline):
+        """ parses a single line """
+        result = ''
 
-proc = Popen("%s/_readNamelist %s"%(SCRIPT_PATH, nlfile), stdout=PIPE, stderr=None, shell=True)
-(namelistContent, err) = proc.communicate()
+        if line == lastline:
+            self.repeat += 1
+            if self.repeat > NSParser.repeat_threshold:
+                return
+        else:
+            if self.repeat > NSParser.repeat_threshold:
+                line = " <Line repeated %d times>" % ( self.repeat - NSParser.repeat_threshold ) + ('\n' if NSParser.re_key.match(line, re.IGNORECASE) else ',') + line
+            self.repeat = 0
 
-it = iter(namelistContent.splitlines())
-#print it.next()
+        # Now, concatenate arrays into the same line.
+        # Hopefully this'll still work with gfortran
+        match_nn = re.search(r'^\s*&', line, re.IGNORECASE)
+        match_array = re.search(r'^\s+(?=.+=.+)', line)
 
-repeat = 0;
-lastline = "";
-namelist=''
-output=''
-reKey = re.compile(r'[a-zA-Z].*=')
-for i,line in enumerate(it):
-    # Figure out what namelist we're in
-    match = re.search(r'\&(\w+)', line)
-    if match:
-        namelist=match.group(1)
+        if NSParser.re_key.match(line, re.IGNORECASE) or match_nn or line==' /':
+            result += '\n'
+            if match_nn:
+                result += '\n'
+                #output += "%3d: "%(i)
+        elif match_array:
+            # remove leading spaces from array values
+            line = re.sub(r'^\s*(?=.*=)', r'', line)
 
-    # Ignore lines outside a namelist
-    #if namelist == '':
-    #	continue;
+        result += line
+        return result
 
-    # Clean up input a bit
-    line = re.sub(r'^\s([a-zA-Z])', r'\1', line, re.IGNORECASE)
-    line = re.sub(r'\s+,', r',', line)
-    line = re.sub(r'\s*=\s+', r' = ', line)
-    line = re.sub(r"^\s*([\d'-])", r' \1', line, re.IGNORECASE)
-    line = re.sub(r"\s*$", r'', line, re.IGNORECASE)
-    line = re.sub(r"\s*&", r'&', line, re.IGNORECASE)
+    def parse(self):
+        """ main method to parse entire file """
+        self.output = ''
+        lastline = ''
+        for i, line in enumerate(self.it):
 
+            line = self.strip_whitespace(line)
+            line = self.filter_line(line)
+            line = self.parse_line(line, lastline)
 
-    # Get rid of messed up characters
-    line = filter(lambda x: x in string.printable, line)
+            if line is not None and line != ",":
+                self.output += line
+                lastline = line
+        return self
 
-    # Get rid of blank/useless lines
-    if line == ",":
-        continue;
+    def print_csv(self):
+        """ print to output as CSV """
+        re_key_val = re.compile(r"(\w[^ ]*)\s*=\s*(.*)$")
 
-    # Check for repeats
-    if line == lastline:
-        repeat+=1;
-        if repeat>repeatThreashold:
-            continue;
-    else:
-        if repeat>repeatThreashold:
-            # This adds an annoying coupling to the contactenation section below,
-            # only real clean way to avoid this would be to add another loup
-            # explicitly for concatenation
-            line = " <Line repeated %d times>"%(repeat-repeatThreashold) + \
-                    ('\n' if reKey.match(line, re.IGNORECASE) else ',') + line
-        repeat = 0;
+        print_output = ''
+        it = iter(self.output.splitlines())
 
-    # Now, concatenate arrays into the same line.  Hopefully this'll still work with gfortran
-    matchNN = re.search(r'^\s*&', line, re.IGNORECASE)
-    matchArray = re.search(r'^\s+(?=.+=.+)', line)
-    if reKey.match(line, re.IGNORECASE) or matchNN or line==' /':
-        #if match or matchNN or line==' /':
-        output += '\n'
-        #print 'reKey=',reKey.match(line, re.IGNORECASE),' match=',reKey.search(line, re.IGNORECASE), ', re.match=', match
-        if matchNN:
-            output += '\n'
-        #output += "%3d: "%(i)
-    elif matchArray:
-        line = re.sub(r'^\s*(?= .*=)', r'', line)
-    output += line;
-    lastline=line
+        for i, line in enumerate(it):
+            # Remove ending comma, I know it's in the original, but it's ugly
+            line = re.sub(',$', '', line)
+            # Normal key/values
+            if re_key_val.match(line):
+                print_output += re_key_val.sub(r'"\1","\2"', line, re.IGNORECASE) + '\n'
+            else:
+                print_output += '"%s",""\n' % (line)
+        print print_output
 
-# Now, comform this to CSV, keeping the values in a second column
-# (even if they're arrays)
-oldOutput=output;
-output='';
-reKeyVal=re.compile(r"(\w[^ ]*)\s*=\s*(.*)$");
-it = iter(oldOutput.splitlines())
-for i,line in enumerate(it):
-    # Remove ending comma, I know it's in the original, but it's ugly
-    line = re.sub(',$', '', line)
+def main():
+    """ sets up variables for pipe and then prints the parse as CSV """
+    tmp_settings_file = '/tmp/TMP.gem_settings.nml'
+    script_path = os.path.dirname(os.path.realpath(__file__))
 
-    # Normal key/values
-    if reKeyVal.match(line):
-        output += reKeyVal.sub(r'"\1","\2"', line, re.IGNORECASE) + '\n'
-    else:
-        output += '"%s",""\n'%(line)
+    # Get namelist
+    nlfile = ''
+    if len(sys.argv) >= 2:
+        nlfile = sys.argv[1]
 
-    #output += line + '\n'
+    # First, remove some of the known replacement strings
+    # Often the 'aftermod' file should be used (which doesn't include these)
+    # rather than the 'beforemod' fileo
+    #
+    # In any case, skip this for now.
+    if (False):
+        f = open(nlfile,'r')
+        output = ''
+        for line in f.readlines():
+            # Start and end dates
+            line = re.sub(r"((strt_|end_).*)\s*=\s*('|\")[a-zA-Z].*('|\")\s*,", r"\1 = '0',", line)
+            # Other known constants
+            line = re.sub(r"=(\s*)PTOPO_NPE.", r"=\1 0 ", line)
+            output = output + line
+            f = open(tmp_settings_file,'w')
+            f.write(output)
+            f.close()
+            nlfile = tmp_settings_file
 
-print output
+    proc = Popen("%s/_readNamelist %s" \
+            %(script_path, nlfile), stdout=PIPE, stderr=None, shell=True)
 
-if os.path.isfile(tmp_settings_file):
-    os.unlink(tmp_settings_file)
+    my_parse = NSParser(proc)
+    #print my_parse.parse().output
+    my_parse.parse().print_csv()
+
+    if os.path.isfile(tmp_settings_file):
+        os.unlink(tmp_settings_file)
+
+if __name__ == "__main__":
+    main()
