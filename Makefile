@@ -28,4 +28,4 @@ _readNamelist: readNamelist.o bidon.o
 	rm -f bidon.o readNamelist.f90
 
 clean:
-	rm -f readNamelist.o bidon.o comparenamelists.mod readNamelist.f90
+	rm -f readNamelist.o bidon.o comparenamelists.mod readNamelist.f90 _readNamelist

@@ -12,7 +12,7 @@ tmp_settings_file = '/tmp/TMP.gem_settings.nml'
 
 # Get namelist
 nlfile=''
-if len(sys.argv) >= 1:
+if len(sys.argv) >= 2:
 	nlfile=sys.argv[1]
 
 # First, remove some of the known replacement strings
