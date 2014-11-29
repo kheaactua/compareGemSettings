@@ -59,3 +59,8 @@ recommendation for this would be:
 
 This was not done in this version in the interest of de-coupling this app from the EC
 environment for quick development.
+
+See Also
+========
+
+See also ''checknml'', a GUI tool available on Environment Canada systems to verify keys in a ''gem_settings.nml'' files.
