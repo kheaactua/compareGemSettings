@@ -1,0 +1,8 @@
+*~
+*.swp
+*.swo
+readNamelist.o
+bidon.o
+comparenamelists.mod
+readNamelist.f90
+_readNamelist

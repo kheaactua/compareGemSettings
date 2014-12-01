@@ -1,0 +1,241 @@
+
+ &grid
+ Grd_typ_S     = 'LU'   ,
+  Grd_ni        = 318    ,     Grd_nj   = 280,
+  Grd_dx        = 0.09   ,     Grd_dy   = 0.09,
+  Grd_iref      = 160    ,     Grd_jref = 110,
+  Grd_lonr      = 180.     ,     Grd_latr = 0.01125 ,
+  Grd_xlon1     =-109.35,     Grd_xlat1=53.77,
+  Grd_xlon2     =-110.75,     Grd_xlat2=56.77,
+ /
+
+ &grdc
+  Grdc_ni        = 643    ,     Grdc_nj   = 544  ,
+  Grdc_dx        = 0.0225 ,
+  Grdc_iref      = 280    ,     Grdc_jref = 247     ,
+  Grdc_lonr      = 180.   ,     Grdc_latr = 0.01125 ,
+  Grdc_maxcfl=4,
+  Grdc_maxcfl=4,
+  Grdc_hblen=10,
+  Grdc_nbits=32,
+  Grdc_bcs_hollow_L=.false.,
+  Grdc_nfe='900S',
+  Grdc_runstrt_S="20141124.120000"
+ /
+
+ &ptopo
+  Ptopo_npex      = 8, Ptopo_npey      = 10,
+  Ptopo_nblocx    = 8          , Ptopo_nblocy    = 10,
+  Ptopo_bind_L    = .true.     ,
+  Ptopo_smtdyn    = 8          , Ptopo_smtphy    = 8        ,
+/
+
+ &gement
+  E_geol_glanl_L  = .true.     , 
+  E_geol_glreg_L  = .false.    ,
+  E_geol_hsea     = 99999      , 
+  E_geol_poin     = 3          ,
+  E_geol_z0cst    = -1.0       , 
+  E_geol_modex_L  = .false.    ,
+  E_tr3d_list_S   =  
+                    'TA2=P', 'TA3=P', 'TALD=P',
+                    'TARO=P','TBZO=P','TC38=P',
+                    'TCO=P', 'TCR1=P','TCR2=P','TCRE=P','TDIA=P',
+                    'TETH=P','TH22=P','THCH=P','THN3=P','THN4=P',
+                    'THO2=P','THON=P','TISO=P','TMC3=P','TMEK=P',
+                    'TMGL=P','TN25=P','TNH3=P',
+                    'TNO2=P','TNO3=P','TNO=P', 'TO3=P', 'TO=P',
+                    'TOH=P', 'TOSD=P','TPAN=P',
+                    'TR22=P','TR2N=P','TR2R=P','TRN3=P','TRO2=P',
+                    'TROO=P','TSO2=P','TSO4=P',
+                    'TTOL=P',
+                    'TSU1=P','TSU2=P','TSS1=P','TSS2=P',
+                    'TOC1=P','TOC2=P','TNI1=P','TNI2=P',
+                    'TAM1=P','TAM2=P','TCM1=P','TCM2=P',
+                    'TEC1=P','TEC2=P','TPC1=P','TPC2=P',
+  Mod_runstrt_S='20141124.060000' ,
+  Pil_bmf_L = .true.,
+  Pil_hblen       = 10         ,
+  Pil_jobend_S ='20141125.120000' ,
+  Pil_jobstrt_S='20141124.060000' ,
+  Pil_maxcfl      = 4          , 
+  Pil_nesdt= 3600
+  Topo_dgfms_L    = .true.     ,
+  Topo_dgfmx_L    = .true.     , 
+  Topo_filmx_L    = .true.     ,
+  Topo_init_L     = .true.     , 
+
+/
+
+
+ &gem_cfgs
+  hyb =   0.0000,  0.0102,  0.0233,  0.0374,  0.0508,
+          0.0625,  0.0720,  0.0795,  0.0852,  0.0897,
+          0.0941,  0.0990,  0.1044,  0.1104,  0.1172,
+          0.1248,  0.1334,  0.1431,  0.1541,  0.1667,
+          0.1812,  0.1976,  0.2149,  0.2331,  0.2522,
+          0.2721,  0.2928,  0.3144,  0.3369,  0.3602,
+          0.3843,  0.4091,  0.4348,  0.4612,  0.4883,
+          0.5161,  0.5446,  0.5737,  0.6034,  0.6337,
+          0.6646,  0.6959,  0.7272,  0.7567,  0.7845,
+          0.8104,  0.8346,  0.8571,  0.8780,  0.8973,
+          0.9151,  0.9316,  0.9467,  0.9606,  0.9733,
+          0.9850,  0.9950,  1.0000
+
+  Grd_rcoef       = 1.6        , Pres_ptop       = 10.0   , 
+  Pres_vtap_L     = .true.     ,
+
+  Step_total      = 360        , Step_rsti       = 99999,
+  Step_gstat      = 50         , Lctl_r8stat_L   = .true. ,
+
+  Level_ip12000_L = .true.     ,
+
+  Adw_interp_type_S = 'lag3d'  , Adw_nosetint_L  = .false.    ,
+
+  Sol_type_S      = 'DIRECT'   ,
+
+  Cstv_dt_8       = 300.      , Cstv_tstr_8     = 200.0      ,
+  Cstv_pitop_8    = -1.0       , Cstv_pisrf_8    = 1000.0     ,
+
+  Hblen_x         = 10         , Hblen_y         = 10         ,
+
+  Step_cliptraj_L = .TRUE.     ,
+  Step_maxcfl     = 4          ,
+
+  Lam_runstrt_S   = "20141124.060000" ,
+  Lam_nesdt       = 3600,
+  Lam_toptt_L     = .false. ,
+
+  Hzd_type_S      = 'EXPLICIT' , Hzd_pwr         = 6          ,
+  Hzd_uvwdt_L     = .true.     , Hzd_lnr         = 0.04       ,
+
+  Vspng_mf        = -1         , Vspng_nk        = 4          ,
+  Vspng_uvwdt_L   = .true.     , Vspng_njpole    = 0          ,
+  Vspng_rwnd_L    = .true.     , Vspng_nutop     = 2.0        ,
+
+  Init_balgm_L    = .false.    , Init_dftr_L     = .false.    ,
+  Init_dfwin_L    = .true.     , Init_dfnp       = 37         ,
+  Init_dfpl_8     = 10800.     ,
+
+  Schm_hydro_L    = .true.
+  Schm_itcn       = 2          , Schm_modcn      = 1          ,
+  Schm_itnlh      = 2          , Schm_itraj      = 3          , 
+
+  Offc_a0_8       = 1.0        , Offc_a1_8       = -1.0       ,
+  Offc_b0_8       = 0.6        , Offc_b1_8       =  0.4       ,
+
+  Out3_nbitg      = 12         , Out3_cliph_L    = .true.     ,
+  Out3_cubzt_L    = .false.    , Out3_cubuv_L    = .false.    ,
+  Out3_cubds_L    = .false.    , Out3_cubqs_L    = .false.    ,
+  Out3_cubdd_L    = .false.    , Out3_cubqq_L    = .false.    ,
+  Out3_cubww_L    = .false.    , Out3_vt2gz_L    = .true.     ,
+
+  Out3_etik_s     = 'ETIKET',
+  Out3_zund       = 2500, 2000, 1500,
+  Out3_unit_s     = ' ',
+
+  P_lmvd_valml_8  = 0.0        ,
+
+  P_serg_srwri    = 1          , P_serg_serstp   = 432        ,
+  P_serg_srsus_L  = .false.    ,
+  Mem_mx3db  =  483 ,
+
+/
+
+ &physics_cfgs
+ phy_pck_version  = 'RPN-CMC_5.0.4.4',
+
+ AGREGAT    = .true.     ,
+ BETA2      = 1.0        ,
+ BKGALB     = .false.    ,
+ CONVEC     = 'kfc'      ,
+ EPONGE     = 450., 449.6292, 362.0958, 106.7958,
+ FLUVERT    = 'moistke'  ,
+ GWDRAG     = 'gwd86'    ,
+ HC2        = 0.8        ,
+ HF2        = 0.8        ,
+ HM2        = 0.8         ,
+ ICEMELT    = .true.     ,
+ INILWC     = .true.     ,
+ KFCDEPTH   = 4000.       ,
+ KFCDET     = 0.          ,
+ KFCDLEV    = 0.5        ,
+ KFCMOM     = .false.    ,
+ KFCPCP     = 'conspcpn' ,
+ KFCRAD     = 1500.      ,
+ KFCTIMEA   = 2700.       ,
+ KFCTIMEC   = 2700.      ,
+ KFCTRIG4   = 0,72,0.05,0.15 ,
+ KNTRAD     = 5          ,
+ KTICEFRAC  = .true.     ,
+ LIMSNODP   = .false.    ,
+ LONGMEL    = 'blac62'   ,
+ MOYHR      = 0          ,
+ PARSOL     = 2.3E+06,.8E+06,2.0E+06,0.5E-06,0.1E-06,1.1E-06,
+ PCPTYPE    = 'NIL' ,
+ QCO2       = 360.0      ,
+ RADFLTR    = .false.    ,
+ RADIA      = 'cccmarad'   ,
+ SATUCO     = .true.     ,
+ SCHMSOL    = 'ISBA'     ,
+ SHLCVT     = 'nil'      ,'ktrsnt'                       ,
+ STCOND     = 'MY_DM'             ,
+ TDIAGLIM   = .true.     ,
+ TYPSOL     = .true.     ,
+ ZTA        = -1.        ,
+ ZUA        = -1.        ,
+ Z0TLAT     = 25.,30.    ,
+
+/
+
+&chem_cfgs
+ chm_model_s        = 'MACH'           ,
+ chm_aqhi_l           = .false.        ,
+ chm_aqueous_s      = 'GONG'           ,
+ chm_bc_prof_l      = .false.           ,
+ chm_biog_s         = 'BEIS3.09'       ,
+ chm_blcld_l        = .true.           ,
+ chm_debug_2d_i     = 0                ,
+ chm_debug_3d_i     = 0                ,
+ chm_gas_drydep_s   = 'ROBICHAUD'      ,
+ chm_gaschem_online_l = .true.         ,
+ chm_get_ae_emis_l  = .true.           ,
+ chm_get_be_emis_l  = .true.           ,
+ chm_get_mj_emis_l  = .true.           ,
+ chm_hetchem_metstlb_l  = .true.       ,
+ chm_hetchem_s      = 'HETV'           ,
+ chm_incld_l        = .true.           ,
+ chm_intrsec_ndiv     = 6              ,
+ chm_intrsec_ver      = 1              ,
+ chm_mj_treatment_s = 'PLUMERISE'      ,
+ chm_pkg_gas_s      = 'ADOM2'          ,
+ chm_pkg_pm_s       = 'CAM2BINS'       ,
+ chm_pm_coag_step_intvl = 1            ,
+ chm_pm_drydep_s    = 'ZHANG'          ,
+ chm_seaflux_s      = 'GONG_MONAHAN'   ,
+ chm_soa_s          = 'JIANG'          ,
+ chm_step_factor    = 2                ,
+ chm_vert_diff_s    = 'BOUNDARY'       ,
+ chm_winddust_s     = 'CAM_WINDDUST'   ,
+ em_dt_strt_S       = "20141124.060000",
+ em_dt_end_S        = "20141125.120000",
+ em_nesdt           =  3600.0          ,
+ nk_start           =  1               ,
+
+ jd     = 9
+ id     = 11
+ dlev   = 58
+ it     = 8
+ itr    = 50
+
+ aerosize = 0.005, 1.280, 5.12
+ /
+
+
+
+
+
+
+
+
+
