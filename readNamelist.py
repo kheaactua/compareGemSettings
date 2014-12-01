@@ -67,7 +67,8 @@ class NSParser(object):
                 #output += "%3d: "%(i)
         elif match_array:
             # remove leading spaces from array values
-            print "match_array: %s"(line)
+			# For example: '                 TSU2=P,'->'TSU2=P,'
+			# Am I confused though as to what the (?=.*=) is doing here
             line = re.sub(r'^\s*(?=.*=)', r'', line)
 
         result += line
