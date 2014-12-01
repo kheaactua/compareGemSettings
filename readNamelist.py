@@ -30,7 +30,9 @@ class NSParser(object):
 
     @staticmethod
     def filter_line(line):
-        """ filters a single line """
+        """ Filter a single line """
+
+        # filters out non-printable characters
         line = filter(lambda x: x in string.printable, line)
         return line
 
@@ -44,12 +46,18 @@ class NSParser(object):
                 return
         else:
             if self.repeat > NSParser.repeat_threshold:
-                line = " <Line repeated %d times>" % ( self.repeat - NSParser.repeat_threshold ) + ('\n' if NSParser.re_key.match(line, re.IGNORECASE) else ',') + line
+                # This adds an annoying coupling to the contactenation
+                # section below, only real clean way to avoid this would
+                # be to add another loup # explicitly for concatenation
+                line = " <Line repeated %d times>" % \
+                    ( self.repeat - NSParser.repeat_threshold ) + \
+                    ('\n' if NSParser.re_key.match(line, re.IGNORECASE) else ',') + \
+                    line
             self.repeat = 0
 
         # Now, concatenate arrays into the same line.
         # Hopefully this'll still work with gfortran
-        match_nn = re.search(r'^\s*&', line, re.IGNORECASE)
+        match_nn = re.search(r'^\s*&', line, re.IGNORECASE) # new namelist
         match_array = re.search(r'^\s+(?=.+=.+)', line)
 
         if NSParser.re_key.match(line, re.IGNORECASE) or match_nn or line==' /':
@@ -59,6 +67,7 @@ class NSParser(object):
                 #output += "%3d: "%(i)
         elif match_array:
             # remove leading spaces from array values
+            print "match_array: %s"(line)
             line = re.sub(r'^\s*(?=.*=)', r'', line)
 
         result += line
@@ -91,7 +100,10 @@ class NSParser(object):
             line = re.sub(',$', '', line)
             # Normal key/values
             if re_key_val.match(line):
-                print_output += re_key_val.sub(r'"\1","\2"', line, re.IGNORECASE) + '\n'
+                print_output += re_key_val.sub(
+                    r'"\1","\2"',
+                    line,
+                    re.IGNORECASE) + '\n'
             else:
                 print_output += '"%s",""\n' % (line)
         print print_output
@@ -106,17 +118,22 @@ def main():
     if len(sys.argv) >= 2:
         nlfile = sys.argv[1]
 
-    # First, remove some of the known replacement strings
-    # Often the 'aftermod' file should be used (which doesn't include these)
-    # rather than the 'beforemod' fileo
+    # First, remove some of the known replacement strings.
+    # Often the 'aftermod' file should be used (which doesn't include
+    # these) rather than the 'beforemod' file
     #
-    # In any case, skip this for now.
+    # In any case, skip this for now.  It may be re-introduced later
+    # (in such a way that the code will 'detect' whether to use it or
+    # not)
     if (False):
         f = open(nlfile,'r')
         output = ''
         for line in f.readlines():
             # Start and end dates
-            line = re.sub(r"((strt_|end_).*)\s*=\s*('|\")[a-zA-Z].*('|\")\s*,", r"\1 = '0',", line)
+            line = re.sub(
+                r"((strt_|end_).*)\s*=\s*('|\")[a-zA-Z].*('|\")\s*,",
+                r"\1 = '0',",
+                line)
             # Other known constants
             line = re.sub(r"=(\s*)PTOPO_NPE.", r"=\1 0 ", line)
             output = output + line
