@@ -29,8 +29,8 @@ This app is only written for GEM/3.3.8, and does not compare chemistry configura
 Building
 ========
 
-The ``Makefile`` is designed to work in the Environment Canada environment using s.f90, or elsewise to use
-PGI compilers.  This is detected by looking for the ``EC_ARCH`` environment variable.
+The `Makefile` is designed to work in the Environment Canada environment using s.f90, or elsewise to use
+PGI compilers.  This is detected by looking for the `EC_ARCH` environment variable.
 
 To build, simple type
 
@@ -63,4 +63,4 @@ environment for quick development.
 See Also
 ========
 
-See also ''checknml'', a GUI tool available on Environment Canada systems to verify keys in a ''gem_settings.nml'' files.
+See also `checknml`, a GUI tool available on Environment Canada systems to verify keys in a `gem_settings.nml` files.
